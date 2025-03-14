@@ -1,0 +1,34 @@
+/** @type {import('@nativecn/cli').Config} */
+module.exports = {
+  // Project styling approach
+  styling: "nativewind", // or "stylesheet"
+  
+  // Theme configuration
+  theme: {
+    // Use existing theme provider if available
+    useExisting: false,
+    
+    // Path to existing theme provider if using one
+    existingThemePath: null,
+    
+    // Default theme mode 
+    defaultTheme: "light",
+    
+    // Use system theme
+    useSystemTheme: true,
+  },
+  
+  // Component style preferences
+  components: {
+    // Directory where components are copied
+    outDir: "./components/ui",
+    
+    // Default props for components
+    defaultProps: {
+      Button: {
+        variant: "default",
+        size: "default",
+      },
+    }
+  }
+};

@@ -1,0 +1,27 @@
+{
+  "name": "nativecn",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@react-native/metro-config": "^0.78.0",
+    "tailwindcss": "^3.4.17",
+    "turbo": "^1.10.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "nativewind": "^4.0.1",
+    "react-native-reanimated": "^3.16.2",
+    "react-native-safe-area-context": "^4.9.0"
+  }
+}
