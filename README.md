@@ -73,11 +73,11 @@ npx nativecn init
 npx nativecn add button
 ```
 
-### Alternatively, you can link the CLI package directly
+### Alternatively, you can link individual packages
 
 ```bash
-# Link CLI package
-npm link @nativecn/cli
+# Link individual packages
+npm link @nativecn/cli @nativecn/components
 
 # Run commands
 npx nativecn init
