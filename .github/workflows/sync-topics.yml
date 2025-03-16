@@ -1,0 +1,28 @@
+name: Sync GitHub Topics
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/cli/package.json'
+
+jobs:
+  sync-topics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Extract Keywords from package.json
+        id: extract
+        run: |
+          KEYWORDS=$(node -e "
+            const pkg = require('./packages/cli/package.json');
+            console.log(pkg.keywords.join(','));
+          ")
+          echo "keywords=$KEYWORDS" >> $GITHUB_OUTPUT
+      
+      - name: Update GitHub Topics
+        uses: Hodrobond/github-tag-action@1.0.1
+        with:
+          topics: ${{ steps.extract.outputs.keywords }}
+          token: ${{ secrets.GITHUB_TOKEN }} 
