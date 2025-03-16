@@ -1,14 +1,35 @@
 {
   "name": "@nativecn/cli",
   "version": "0.1.0",
+  "private": false,
+  "description": "CLI tool for initializing and managing NativeCN components in React Native projects",
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/tailwiinder/nativecn#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tailwiinder/nativecn.git"
+  },
+  "keywords": [
+    "react-native",
+    "nativecn",
+    "ui-components",
+    "cli"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "bin": {
-    "nativecn": "./dist/index.js"
+    "nativecn": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix"
+    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+    "prepare": "chmod +x dist/index.js"
   },
   "dependencies": {
     "chalk": "^4.1.2",

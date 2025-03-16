@@ -1,0 +1,36 @@
+src/
+tests/
+tsconfig.json
+.eslintrc
+.prettierrc
+*.log
+.turbo
+.husky
+node_modules
+
+# Common directories to exclude
+.git/
+.github/
+.vscode/
+.idea/
+coverage/
+
+# TypeScript related
+*.tsbuildinfo
+
+# CI/CD and config files
+.travis.yml
+.gitlab-ci.yml
+.circleci/
+.env*
+*.config.js
+!babel.config.js
+!metro.config.js
+
+# Documentation and examples that shouldn't be published
+docs/
+examples/
+*.md
+!README.md
+!CHANGELOG.md
+!LICENSE.md 
