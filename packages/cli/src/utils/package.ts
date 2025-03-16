@@ -1,11 +1,12 @@
-import fs from "fs-extra";
-import path from "path";
+import path from 'path';
+
+import fs from 'fs-extra';
 
 /**
  * Get package information from package.json
  */
 export async function getPackageInfo() {
-  const packageJsonPath = path.resolve(__dirname, "../../package.json");
+  const packageJsonPath = path.resolve(__dirname, '../../package.json');
 
   try {
     const packageJson = await fs.readJSON(packageJsonPath);
@@ -13,10 +14,10 @@ export async function getPackageInfo() {
       name: packageJson.name,
       version: packageJson.version,
     };
-  } catch (error) {
+  } catch {
     return {
-      name: "@nativecn/cli",
-      version: "0.1.0",
+      name: '@nativecn/cli',
+      version: '0.1.0',
     };
   }
 }
@@ -26,7 +27,7 @@ export async function getPackageInfo() {
  */
 export async function getUserPackageInfo() {
   const cwd = process.cwd();
-  const packageJsonPath = path.join(cwd, "package.json");
+  const packageJsonPath = path.join(cwd, 'package.json');
 
   try {
     const packageJson = await fs.readJSON(packageJsonPath);
@@ -35,7 +36,7 @@ export async function getUserPackageInfo() {
       data: packageJson,
       exists: true,
     };
-  } catch (error) {
+  } catch {
     return {
       path: packageJsonPath,
       data: {},

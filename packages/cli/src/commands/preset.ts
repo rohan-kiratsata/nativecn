@@ -1,10 +1,11 @@
-import fs from "fs-extra";
-import path from "path";
-import chalk from "chalk";
-import prompts from "prompts";
+import path from 'path';
+
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import prompts from 'prompts';
 
 export async function presetCommand() {
-  console.log(chalk.bold("Generating NativeCN preset file..."));
+  console.log(chalk.bold('Generating NativeCN preset file...'));
 
   const presetContent = `/**
  * NativeCN default theme preset for tailwindcss
@@ -94,28 +95,28 @@ module.exports = {
 
   // Write the preset file to the user's project
   const userPresetPath = path.join(process.cwd(), 'nativecn-preset.js');
-  
+
   // Check if the file already exists
   if (await fs.pathExists(userPresetPath)) {
     const overwriteResponse = await prompts({
-      type: "confirm",
-      name: "overwrite",
-      message: "nativecn-preset.js already exists. Overwrite?",
-      initial: true
+      type: 'confirm',
+      name: 'overwrite',
+      message: 'nativecn-preset.js already exists. Overwrite?',
+      initial: true,
     });
-    
+
     if (overwriteResponse.overwrite) {
       await fs.writeFile(userPresetPath, presetContent);
-      console.log(chalk.green("✓"), "Updated nativecn-preset.js in your project");
+      console.log(chalk.green('✓'), 'Updated nativecn-preset.js in your project');
     } else {
-      console.log(chalk.yellow("Operation cancelled"));
+      console.log(chalk.yellow('Operation cancelled'));
       return;
     }
   } else {
     await fs.writeFile(userPresetPath, presetContent);
-    console.log(chalk.green("✓"), "Created nativecn-preset.js in your project");
+    console.log(chalk.green('✓'), 'Created nativecn-preset.js in your project');
   }
-  
-  console.log("\nTo use this preset, add it to your tailwind.config.js:");
+
+  console.log('\nTo use this preset, add it to your tailwind.config.js:');
   console.log("\npresets: [require('./nativecn-preset')],");
-} 
+}

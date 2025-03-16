@@ -1,18 +1,16 @@
-import fs from "fs-extra";
-import path from "path";
-import chalk from "chalk";
-import { readConfig } from "./config";
+import path from 'path';
+
+import chalk from 'chalk';
+import fs from 'fs-extra';
+
+import { NativeCNConfig, readConfig } from './config';
 
 /**
  * Get the template directory for a component
  */
 export function getTemplateDir(component: string) {
   // Look for the component template in the components package
-  const templatePath = path.resolve(
-    __dirname,
-    "../../../components/ui",
-    component
-  );
+  const templatePath = path.resolve(__dirname, '../../../components/ui', component);
 
   if (fs.existsSync(templatePath)) {
     return templatePath;
@@ -37,7 +35,7 @@ export async function copyComponentTemplate(
   // Check if component already exists
   if (fs.existsSync(destinationDir) && !overwrite) {
     console.warn(
-      chalk.yellow("!"),
+      chalk.yellow('!'),
       `Component '${component}' already exists. Use --overwrite to replace it.`
     );
     return false;
@@ -54,7 +52,7 @@ export async function copyComponentTemplate(
       const sourcePath = path.join(templateDir, file);
       const destPath = path.join(destinationDir, file);
 
-      let content = await fs.readFile(sourcePath, "utf-8");
+      let content = await fs.readFile(sourcePath, 'utf-8');
 
       // Process the file content based on config
       content = processTemplateContent(content, config);
@@ -62,11 +60,11 @@ export async function copyComponentTemplate(
       await fs.writeFile(destPath, content);
     }
 
-    console.log(chalk.green("✓"), `Added component '${component}'`);
+    console.log(chalk.green('✓'), `Added component '${component}'`);
     return true;
   } catch (error) {
     console.error(
-      chalk.red("✗"),
+      chalk.red('✗'),
       `Failed to copy component '${component}':`,
       error instanceof Error ? error.message : String(error)
     );
@@ -77,14 +75,11 @@ export async function copyComponentTemplate(
 /**
  * Process template content based on configuration
  */
-function processTemplateContent(content: string, config: any) {
+function processTemplateContent(content: string, config: NativeCNConfig) {
   // Replace import paths based on styling approach
-  if (config.styling === "stylesheet") {
+  if (config.styling === 'stylesheet') {
     // Use StyleSheet imports
-    content = content.replace(
-      /useNativeStyleSheet\s*=\s*false/g,
-      "useNativeStyleSheet = true"
-    );
+    content = content.replace(/useNativeStyleSheet\s*=\s*false/g, 'useNativeStyleSheet = true');
   }
 
   // Replace theme configuration

@@ -1,35 +1,36 @@
-import fs from "fs-extra";
-import path from "path";
-import chalk from "chalk";
+import path from 'path';
+
+import chalk from 'chalk';
+import fs from 'fs-extra';
 
 export interface NativeCNConfig {
-  styling: "nativewind" | "stylesheet";
+  styling: 'nativewind' | 'stylesheet';
   theme: {
     useExisting: boolean;
     existingThemePath: string | null;
-    defaultTheme: "light" | "dark" | "system";
+    defaultTheme: 'light' | 'dark' | 'system';
     useSystemTheme: boolean;
   };
   components: {
     outDir: string;
-    defaultProps: Record<string, Record<string, any>>;
+    defaultProps: Record<string, unknown>;
   };
 }
 
 const defaultConfig: NativeCNConfig = {
-  styling: "nativewind",
+  styling: 'nativewind',
   theme: {
     useExisting: false,
     existingThemePath: null,
-    defaultTheme: "light",
+    defaultTheme: 'light',
     useSystemTheme: true,
   },
   components: {
-    outDir: "./components/ui",
+    outDir: './components/ui',
     defaultProps: {
       Button: {
-        variant: "default",
-        size: "default",
+        variant: 'default',
+        size: 'default',
       },
     },
   },
@@ -38,11 +39,9 @@ const defaultConfig: NativeCNConfig = {
 /**
  * Create a NativeCN config file
  */
-export async function createConfig(
-  configOptions: Partial<NativeCNConfig> = {}
-) {
+export async function createConfig(configOptions: Partial<NativeCNConfig> = {}) {
   const cwd = process.cwd();
-  const configPath = path.join(cwd, "nativecn.config.js");
+  const configPath = path.join(cwd, 'nativecn.config.js');
 
   // Merge default config with provided options
   const config = {
@@ -65,10 +64,14 @@ module.exports = ${JSON.stringify(config, null, 2)};
 
   try {
     await fs.writeFile(configPath, configContent);
-    console.log(chalk.green("✓"), "Created NativeCN config file");
+    console.log(chalk.green('✓'), 'Created NativeCN config file');
     return true;
   } catch (error) {
-    console.error(chalk.red("✗"), "Failed to create config file");
+    console.error(
+      chalk.red('✗'),
+      'Failed to create config file:',
+      error instanceof Error ? error.message : String(error)
+    );
     return false;
   }
 }
@@ -76,9 +79,9 @@ module.exports = ${JSON.stringify(config, null, 2)};
 /**
  * Read the NativeCN config file
  */
-export async function readConfig(): Promise<NativeCNConfig> {
+export function readConfig(): NativeCNConfig {
   const cwd = process.cwd();
-  const configPath = path.join(cwd, "nativecn.config.js");
+  const configPath = path.join(cwd, 'nativecn.config.js');
 
   try {
     // Using require to load the config as a module
@@ -86,7 +89,11 @@ export async function readConfig(): Promise<NativeCNConfig> {
     const config = require(configPath);
     return config as NativeCNConfig;
   } catch (error) {
-    console.warn(chalk.yellow("!"), "Config file not found, using defaults");
+    console.warn(
+      chalk.yellow('!'),
+      'Config file not found, using defaults:',
+      error instanceof Error ? error.message : String(error)
+    );
     return defaultConfig;
   }
 }

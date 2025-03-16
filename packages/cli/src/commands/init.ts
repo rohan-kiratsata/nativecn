@@ -1,39 +1,38 @@
-import fs from "fs-extra";
-import path from "path";
-import execa from "execa";
-import chalk from "chalk";
-import prompts from "prompts";
-import { createConfig } from "../utils/config";
-import { isPackageInstalled, getUserPackageInfo } from "../utils/package";
+import path from 'path';
+
+import chalk from 'chalk';
+import execa from 'execa';
+import fs from 'fs-extra';
+import prompts from 'prompts';
+
+import { createConfig } from '../utils/config';
+import { isPackageInstalled, getUserPackageInfo } from '../utils/package';
 
 interface InitOptions {
-  styling?: "nativewind" | "stylesheet";
-  theme?: "light" | "dark" | "system";
+  styling?: 'nativewind' | 'stylesheet';
+  theme?: 'light' | 'dark' | 'system';
   skipInstall?: boolean;
 }
 
 export async function initCommand(options: InitOptions = {}) {
-  console.log(chalk.bold("Initializing NativeCN in your project..."));
+  console.log(chalk.bold('Initializing NativeCN in your project...'));
 
   // Check if package.json exists
   const packageInfo = await getUserPackageInfo();
 
   if (!packageInfo.exists) {
     console.error(
-      chalk.red("✗"),
-      "No package.json found. Please run this command in a React Native project."
+      chalk.red('✗'),
+      'No package.json found. Please run this command in a React Native project.'
     );
     process.exit(1);
   }
 
   // Check if this is a React Native project
-  const isReactNative = await isPackageInstalled("react-native");
+  const isReactNative = await isPackageInstalled('react-native');
 
   if (!isReactNative) {
-    console.error(
-      chalk.red("✗"),
-      "This does not appear to be a React Native project."
-    );
+    console.error(chalk.red('✗'), 'This does not appear to be a React Native project.');
     process.exit(1);
   }
 
@@ -41,83 +40,95 @@ export async function initCommand(options: InitOptions = {}) {
   let styling = options.styling;
 
   if (!styling) {
-    const isNativeWindInstalled = await isPackageInstalled("nativewind");
+    const isNativeWindInstalled = await isPackageInstalled('nativewind');
 
     if (isNativeWindInstalled) {
-      styling = "nativewind";
+      styling = 'nativewind';
     } else {
       // Ask user for styling preference
       const response = await prompts({
-        type: "select",
-        name: "styling",
-        message: "Which styling approach would you like to use?",
+        type: 'select',
+        name: 'styling',
+        message: 'Which styling approach would you like to use?',
         choices: [
           {
-            title: "NativeWind (Tailwind CSS for React Native)",
-            value: "nativewind",
+            title: 'NativeWind (Tailwind CSS for React Native)',
+            value: 'nativewind',
           },
-          { title: "React Native StyleSheet", value: "stylesheet" },
+          { title: 'React Native StyleSheet', value: 'stylesheet' },
         ],
       });
 
       styling = response.styling;
 
       if (!styling) {
-        console.log(chalk.yellow("Operation cancelled"));
+        console.log(chalk.yellow('Operation cancelled'));
         process.exit(0);
       }
     }
   }
 
   // Check if NativeWind is properly configured when using nativewind
-  if (styling === "nativewind") {
+  if (styling === 'nativewind') {
     const hasNativeWindSetup = await checkNativeWindSetup();
-    
+
     if (!hasNativeWindSetup) {
-      console.log(chalk.yellow("\nNativeWind is not fully configured in your project."));
-      console.log("Please follow these steps to set up NativeWind first:");
-      console.log("1. Install dependencies: npm install nativewind tailwindcss");
-      console.log("2. Create a tailwind.config.js file");
-      console.log("3. Set up your babel config and metro config for NativeWind");
-      console.log("\nSee NativeWind docs for more details: https://www.nativewind.dev/getting-started");
-      
+      console.log(chalk.yellow('\nNativeWind is not fully configured in your project.'));
+      console.log('Please follow these steps to set up NativeWind first:');
+      console.log('1. Install dependencies: npm install nativewind tailwindcss');
+      console.log('2. Create a tailwind.config.js file');
+      console.log('3. Set up your babel config and metro config for NativeWind');
+      console.log(
+        '\nSee NativeWind docs for more details: https://www.nativewind.dev/getting-started'
+      );
+
       const continueResponse = await prompts({
-        type: "confirm",
-        name: "continue",
-        message: "Do you want to continue anyway?",
-        initial: false
+        type: 'confirm',
+        name: 'continue',
+        message: 'Do you want to continue anyway?',
+        initial: false,
       });
-      
+
       if (!continueResponse.continue) {
-        console.log(chalk.yellow("Operation cancelled"));
+        console.log(chalk.yellow('Operation cancelled'));
         process.exit(0);
       }
     }
-    
+
     // Check if tailwind.config.js exists
-    const tailwindConfigPath = path.join(process.cwd(), "tailwind.config.js");
+    const tailwindConfigPath = path.join(process.cwd(), 'tailwind.config.js');
     if (await fs.pathExists(tailwindConfigPath)) {
       // Ask if user wants to add our preset
       const addPresetResponse = await prompts({
-        type: "confirm",
-        name: "addPreset",
-        message: "Would you like to add the NativeCN preset to your tailwind.config.js?",
-        initial: true
+        type: 'confirm',
+        name: 'addPreset',
+        message: 'Would you like to add the NativeCN preset to your tailwind.config.js?',
+        initial: true,
       });
-      
+
       if (addPresetResponse.addPreset) {
         // Add our preset to their tailwind config
         await addPresetToTailwindConfig(tailwindConfigPath);
       } else {
-        console.log(chalk.yellow("\nWarning: Without the NativeCN preset, some components may not style correctly."));
-        console.log("You can manually add it to your tailwind.config.js later with:");
-        console.log("1. First create nativecn-preset.js with our theme (run 'npx nativecn preset')");
+        console.log(
+          chalk.yellow(
+            '\nWarning: Without the NativeCN preset, some components may not style correctly.'
+          )
+        );
+        console.log('You can manually add it to your tailwind.config.js later with:');
+        console.log(
+          "1. First create nativecn-preset.js with our theme (run 'npx nativecn preset')"
+        );
         console.log("2. Add to your tailwind.config.js: presets: [require('./nativecn-preset')],");
       }
     } else {
-      console.log(chalk.yellow("\nWarning: No tailwind.config.js found. Some components may not style correctly."));
-      console.log("To set up tailwind.config.js with the NativeCN preset:");
-      console.log("1. Create a basic tailwind.config.js file");
+      console.log(
+        chalk.yellow(
+          '\nWarning: No tailwind.config.js found. Some components may not style correctly.'
+        )
+      );
+      console.log('To set up tailwind.config.js with the NativeCN preset:');
+      console.log('1. Create a basic tailwind.config.js file');
       console.log("2. Run 'npx nativecn preset' to generate the nativecn-preset.js file");
       console.log("3. Add to your tailwind.config.js: presets: [require('./nativecn-preset')],");
     }
@@ -127,42 +138,36 @@ export async function initCommand(options: InitOptions = {}) {
   const hasExistingTheme = await checkForExistingThemeProvider();
 
   // Create components directory
-  const componentsDir = path.join(process.cwd(), "components/ui");
+  const componentsDir = path.join(process.cwd(), 'components/ui');
   await fs.ensureDir(componentsDir);
 
   // Create config file
   await createConfig({
-    styling: styling as "nativewind" | "stylesheet",
+    styling: styling as 'nativewind' | 'stylesheet',
     theme: {
       useExisting: hasExistingTheme.exists,
       existingThemePath: hasExistingTheme.path,
-      defaultTheme: (options.theme || "light") as "light" | "dark" | "system",
-      useSystemTheme: options.theme === "system",
+      defaultTheme: (options.theme || 'light') as 'light' | 'dark' | 'system',
+      useSystemTheme: options.theme === 'system',
     },
   });
 
   // Install only essential dependencies
   if (!options.skipInstall) {
-    await installEssentialDependencies(styling as "nativewind" | "stylesheet");
+    await installEssentialDependencies();
   }
 
   // Create utility files (not modifying existing ones)
-  await createUtilityFiles(
-    styling as "nativewind" | "stylesheet",
-    hasExistingTheme.exists
-  );
+  await createUtilityFiles();
 
   console.log();
-  console.log(
-    chalk.green("✓"),
-    chalk.bold("NativeCN initialized successfully!")
-  );
+  console.log(chalk.green('✓'), chalk.bold('NativeCN initialized successfully!'));
   console.log();
-  console.log("Next steps:");
-  console.log("  1. Add components to your project:");
-  console.log("     npx nativecn add button card input");
+  console.log('Next steps:');
+  console.log('  1. Add components to your project:');
+  console.log('     npx nativecn add button card input');
   console.log();
-  console.log("  2. Import and use components in your app:");
+  console.log('  2. Import and use components in your app:');
   console.log('     import Button from "./components/ui/button";');
   console.log();
 }
@@ -172,12 +177,12 @@ export async function initCommand(options: InitOptions = {}) {
  */
 async function checkNativeWindSetup(): Promise<boolean> {
   const cwd = process.cwd();
-  const hasNativeWind = await isPackageInstalled("nativewind");
-  const hasTailwind = await isPackageInstalled("tailwindcss");
-  
+  const hasNativeWind = await isPackageInstalled('nativewind');
+  const hasTailwind = await isPackageInstalled('tailwindcss');
+
   // Check for config files
-  const hasTailwindConfig = await fs.pathExists(path.join(cwd, "tailwind.config.js"));
-  
+  const hasTailwindConfig = await fs.pathExists(path.join(cwd, 'tailwind.config.js'));
+
   return hasNativeWind && hasTailwind && hasTailwindConfig;
 }
 
@@ -187,13 +192,16 @@ async function checkNativeWindSetup(): Promise<boolean> {
 async function addPresetToTailwindConfig(configPath: string): Promise<boolean> {
   try {
     let configContent = await fs.readFile(configPath, 'utf8');
-    
+
     // Check if our preset is already there
-    if (configContent.includes('nativecn-preset') || configContent.includes('@nativecn/components/preset')) {
-      console.log(chalk.blue("i"), "NativeCN preset already in tailwind.config.js");
+    if (
+      configContent.includes('nativecn-preset') ||
+      configContent.includes('@nativecn/components/preset')
+    ) {
+      console.log(chalk.blue('i'), 'NativeCN preset already in tailwind.config.js');
       return true;
     }
-    
+
     // Create the nativecn-preset.js file in the user's project
     const presetContent = `/**
  * NativeCN default theme preset for tailwindcss
@@ -284,42 +292,40 @@ module.exports = {
     // Write the preset file to the user's project
     const userPresetPath = path.join(process.cwd(), 'nativecn-preset.js');
     await fs.writeFile(userPresetPath, presetContent);
-    console.log(chalk.green("✓"), "Created nativecn-preset.js in your project");
-    
+    console.log(chalk.green('✓'), 'Created nativecn-preset.js in your project');
+
     // Simple approach - find the module.exports and add our preset
     if (configContent.includes('module.exports')) {
       // If there's already a presets array
       if (configContent.includes('presets:')) {
         // Add our preset to the existing presets array
-        configContent = configContent.replace(
-          /presets:\s*\[([\s\S]*?)\]/,
-          (match, presets) => {
-            const separator = presets.trim() ? ', ' : '';
-            return `presets: [${presets}${separator}require('./nativecn-preset')]`;
-          }
-        );
+        configContent = configContent.replace(/presets:\s*\[([\s\S]*?)\]/, (match, presets) => {
+          const separator = presets.trim() ? ', ' : '';
+          return `presets: [${presets}${separator}require('./nativecn-preset')]`;
+        });
       } else {
         // Add a new presets array
         configContent = configContent.replace(
           /module\.exports\s*=\s*{/,
-          'module.exports = {\n  presets: [require(\'./nativecn-preset\')],'
+          "module.exports = {\n  presets: [require('./nativecn-preset')],"
         );
       }
-      
+
       // Check and update content array to include components path
       if (configContent.includes('content:')) {
-        const hasComponentsPath = configContent.includes('./components/') || configContent.includes('"./components/');
-        
+        const hasComponentsPath =
+          configContent.includes('./components/') || configContent.includes('"./components/');
+
         if (!hasComponentsPath) {
           // Add components path to the content array
-          configContent = configContent.replace(
-            /content:\s*\[([\s\S]*?)\]/,
-            (match, content) => {
-              const separator = content.trim() ? ', ' : '';
-              return `content: [${content}${separator}"./components/**/*.{js,jsx,ts,tsx}"]`;
-            }
+          configContent = configContent.replace(/content:\s*\[([\s\S]*?)\]/, (match, content) => {
+            const separator = content.trim() ? ', ' : '';
+            return `content: [${content}${separator}"./components/**/*.{js,jsx,ts,tsx}"]`;
+          });
+          console.log(
+            chalk.green('✓'),
+            'Added components path to content array in tailwind.config.js'
           );
-          console.log(chalk.green("✓"), "Added components path to content array in tailwind.config.js");
         }
       } else {
         // If no content array exists, add it
@@ -327,20 +333,26 @@ module.exports = {
           /module\.exports\s*=\s*{/,
           'module.exports = {\n  content: ["./components/**/*.{js,jsx,ts,tsx}"],'
         );
-        console.log(chalk.green("✓"), "Added content array with components path to tailwind.config.js");
+        console.log(
+          chalk.green('✓'),
+          'Added content array with components path to tailwind.config.js'
+        );
       }
-      
+
       await fs.writeFile(configPath, configContent);
-      console.log(chalk.green("✓"), "Added NativeCN preset to tailwind.config.js");
+      console.log(chalk.green('✓'), 'Added NativeCN preset to tailwind.config.js');
       return true;
     } else {
-      console.log(chalk.yellow("!"), "Couldn't modify tailwind.config.js - please add the preset manually:");
+      console.log(
+        chalk.yellow('!'),
+        "Couldn't modify tailwind.config.js - please add the preset manually:"
+      );
       console.log("presets: [require('./nativecn-preset')],");
-      console.log("content: [...existing content, \"./components/**/*.{js,jsx,ts,tsx}\"],");
+      console.log('content: [...existing content, "./components/**/*.{js,jsx,ts,tsx}"],');
       return false;
     }
   } catch (error) {
-    console.error(chalk.red("✗"), "Error modifying tailwind.config.js:", error);
+    console.error(chalk.red('✗'), 'Error modifying tailwind.config.js:', error);
     return false;
   }
 }
@@ -351,11 +363,11 @@ module.exports = {
 async function checkForExistingThemeProvider() {
   const cwd = process.cwd();
   const potentialThemePaths = [
-    "src/theme",
-    "app/theme",
-    "lib/theme",
-    "context/theme",
-    "hooks/theme",
+    'src/theme',
+    'app/theme',
+    'lib/theme',
+    'context/theme',
+    'hooks/theme',
   ];
 
   for (const dir of potentialThemePaths) {
@@ -365,11 +377,11 @@ async function checkForExistingThemeProvider() {
       const files = await fs.readdir(fullPath);
 
       for (const file of files) {
-        if (file.toLowerCase().includes("theme")) {
+        if (file.toLowerCase().includes('theme')) {
           // Ask user if this is their theme provider
           const response = await prompts({
-            type: "confirm",
-            name: "useTheme",
+            type: 'confirm',
+            name: 'useTheme',
             message: `Found potential theme provider at ${dir}/${file}. Do you want to use this?`,
             initial: true,
           });
@@ -377,7 +389,7 @@ async function checkForExistingThemeProvider() {
           if (response.useTheme) {
             return {
               exists: true,
-              path: `${dir}/${file.replace(/\.[jt]sx?$/, "")}`,
+              path: `${dir}/${file.replace(/\.[jt]sx?$/, '')}`,
             };
           }
         }
@@ -392,32 +404,32 @@ async function checkForExistingThemeProvider() {
 /**
  * Install essential dependencies only
  */
-async function installEssentialDependencies(styling: "nativewind" | "stylesheet") {
-  console.log(chalk.bold("Installing essential dependencies..."));
+async function installEssentialDependencies() {
+  console.log(chalk.bold('Installing essential dependencies...'));
 
   // We only need to install minimal dependencies
-  const dependencies = ["clsx", "tailwind-merge"];
-  
+  const dependencies = ['clsx', 'tailwind-merge'];
+
   // Detect package manager
   const packageManager = await detectPackageManager();
-  const installCmd = packageManager === "yarn" ? "add" : "install";
-  
+  const installCmd = packageManager === 'yarn' ? 'add' : 'install';
+
   try {
     await execa(packageManager, [installCmd, ...dependencies], {
-      stdio: "inherit",
+      stdio: 'inherit',
     });
-    console.log(chalk.green("✓"), "Essential dependencies installed");
+    console.log(chalk.green('✓'), 'Essential dependencies installed');
     return true;
   } catch (error) {
     console.error(
-      chalk.red("✗"),
-      "Failed to install dependencies:",
+      chalk.red('✗'),
+      'Failed to install dependencies:',
       error instanceof Error ? error.message : String(error)
     );
     console.log(
-      chalk.yellow("!"),
-      "You can install them manually:",
-      `${packageManager} ${installCmd} ${dependencies.join(" ")}`
+      chalk.yellow('!'),
+      'You can install them manually:',
+      `${packageManager} ${installCmd} ${dependencies.join(' ')}`
     );
     return false;
   }
@@ -429,32 +441,29 @@ async function installEssentialDependencies(styling: "nativewind" | "stylesheet"
 async function detectPackageManager() {
   const cwd = process.cwd();
 
-  if (await fs.pathExists(path.join(cwd, "yarn.lock"))) {
-    return "yarn";
+  if (await fs.pathExists(path.join(cwd, 'yarn.lock'))) {
+    return 'yarn';
   }
 
-  if (await fs.pathExists(path.join(cwd, "pnpm-lock.yaml"))) {
-    return "pnpm";
+  if (await fs.pathExists(path.join(cwd, 'pnpm-lock.yaml'))) {
+    return 'pnpm';
   }
 
-  return "npm";
+  return 'npm';
 }
 
 /**
  * Create essential utility files without modifying existing ones
  */
-async function createUtilityFiles(
-  styling: "nativewind" | "stylesheet",
-  useExistingTheme: boolean
-) {
+async function createUtilityFiles() {
   const cwd = process.cwd();
 
   // Create utils directory if it doesn't exist
-  const utilsDir = path.join(cwd, "lib");
+  const utilsDir = path.join(cwd, 'lib');
   await fs.ensureDir(utilsDir);
 
   // Create cn.ts utility if it doesn't exist
-  const cnPath = path.join(utilsDir, "utils.ts");
+  const cnPath = path.join(utilsDir, 'utils.ts');
   if (!(await fs.pathExists(cnPath))) {
     const cnContent = `import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -469,8 +478,8 @@ export function cn(...inputs: ClassValue[]) {
 `;
 
     await fs.writeFile(cnPath, cnContent);
-    console.log(chalk.green("✓"), "Created utility functions in lib/utils.ts");
+    console.log(chalk.green('✓'), 'Created utility functions in lib/utils.ts');
   } else {
-    console.log(chalk.blue("i"), "lib/utils.ts already exists, skipping");
+    console.log(chalk.blue('i'), 'lib/utils.ts already exists, skipping');
   }
 }
