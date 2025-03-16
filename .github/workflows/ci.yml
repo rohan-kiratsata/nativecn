@@ -32,7 +32,12 @@ jobs:
         run: npm run build
 
       - name: Lint
-        run: npm run lint
+        run: |
+          # Run ESLint (assuming it's already configured to ignore templates)
+          npm run lint
+          
+          # For TypeScript type checking, explicitly exclude templates
+          npx tsc --project packages/cli/tsconfig.json --noEmit --skipLibCheck --excludeDirectories packages/cli/templates
 
       - name: Test
         run: npm run test 

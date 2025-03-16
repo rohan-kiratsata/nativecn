@@ -13,7 +13,6 @@ export default [
       'packages/*/dist/**',
       'packages/*/.turbo/**',
       'packages/cli/src/**/*.js',
-      'packages/cli/templates/**',
       'dist/**',
       '**/*.d.ts',
       'coverage/**',
@@ -22,6 +21,7 @@ export default [
       '.vercel/**',
       '*.log',
       '*.tsbuildinfo',
+      'packages/cli/templates/**',
     ],
   },
   // Configuration for JS config files (no TypeScript checking)

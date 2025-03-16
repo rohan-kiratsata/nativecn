@@ -84,6 +84,8 @@ npx nativecn init
 npx nativecn add button
 ```
 
+Contribution guidelines coming soon.
+
 ## License
 
 MIT
