@@ -1,6 +1,6 @@
 {
   "name": "@nativecn/cli",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "private": false,
   "description": "CLI tool for initializing and managing NativeCN components in React Native projects",
   "author": "Your Name <your.email@example.com>",
