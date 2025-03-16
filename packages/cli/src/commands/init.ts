@@ -69,6 +69,60 @@ export async function initCommand(options: InitOptions = {}) {
     }
   }
 
+  // Check if NativeWind is properly configured when using nativewind
+  if (styling === "nativewind") {
+    const hasNativeWindSetup = await checkNativeWindSetup();
+    
+    if (!hasNativeWindSetup) {
+      console.log(chalk.yellow("\nNativeWind is not fully configured in your project."));
+      console.log("Please follow these steps to set up NativeWind first:");
+      console.log("1. Install dependencies: npm install nativewind tailwindcss");
+      console.log("2. Create a tailwind.config.js file");
+      console.log("3. Set up your babel config and metro config for NativeWind");
+      console.log("\nSee NativeWind docs for more details: https://www.nativewind.dev/getting-started");
+      
+      const continueResponse = await prompts({
+        type: "confirm",
+        name: "continue",
+        message: "Do you want to continue anyway?",
+        initial: false
+      });
+      
+      if (!continueResponse.continue) {
+        console.log(chalk.yellow("Operation cancelled"));
+        process.exit(0);
+      }
+    }
+    
+    // Check if tailwind.config.js exists
+    const tailwindConfigPath = path.join(process.cwd(), "tailwind.config.js");
+    if (await fs.pathExists(tailwindConfigPath)) {
+      // Ask if user wants to add our preset
+      const addPresetResponse = await prompts({
+        type: "confirm",
+        name: "addPreset",
+        message: "Would you like to add the NativeCN preset to your tailwind.config.js?",
+        initial: true
+      });
+      
+      if (addPresetResponse.addPreset) {
+        // Add our preset to their tailwind config
+        await addPresetToTailwindConfig(tailwindConfigPath);
+      } else {
+        console.log(chalk.yellow("\nWarning: Without the NativeCN preset, some components may not style correctly."));
+        console.log("You can manually add it to your tailwind.config.js later with:");
+        console.log("1. First create nativecn-preset.js with our theme (run 'npx nativecn preset')");
+        console.log("2. Add to your tailwind.config.js: presets: [require('./nativecn-preset')],");
+      }
+    } else {
+      console.log(chalk.yellow("\nWarning: No tailwind.config.js found. Some components may not style correctly."));
+      console.log("To set up tailwind.config.js with the NativeCN preset:");
+      console.log("1. Create a basic tailwind.config.js file");
+      console.log("2. Run 'npx nativecn preset' to generate the nativecn-preset.js file");
+      console.log("3. Add to your tailwind.config.js: presets: [require('./nativecn-preset')],");
+    }
+  }
+
   // Check for existing theme providers
   const hasExistingTheme = await checkForExistingThemeProvider();
 
@@ -87,18 +141,13 @@ export async function initCommand(options: InitOptions = {}) {
     },
   });
 
-  // Install dependencies
+  // Install only essential dependencies
   if (!options.skipInstall) {
-    await installDependencies(styling as "nativewind" | "stylesheet");
+    await installEssentialDependencies(styling as "nativewind" | "stylesheet");
   }
 
-  // Set up NativeWind configuration if using NativeWind
-  if (styling === "nativewind") {
-    await setupNativeWind();
-  }
-
-  // Create initial files
-  await createInitialFiles(
+  // Create utility files (not modifying existing ones)
+  await createUtilityFiles(
     styling as "nativewind" | "stylesheet",
     hasExistingTheme.exists
   );
@@ -119,182 +168,39 @@ export async function initCommand(options: InitOptions = {}) {
 }
 
 /**
- * Check for existing theme providers in the project
+ * Check if NativeWind is properly set up in the project
  */
-async function checkForExistingThemeProvider() {
+async function checkNativeWindSetup(): Promise<boolean> {
   const cwd = process.cwd();
-  const potentialThemePaths = [
-    "src/theme",
-    "app/theme",
-    "lib/theme",
-    "context/theme",
-    "hooks/theme",
-  ];
-
-  for (const dir of potentialThemePaths) {
-    const fullPath = path.join(cwd, dir);
-
-    if (await fs.pathExists(fullPath)) {
-      const files = await fs.readdir(fullPath);
-
-      for (const file of files) {
-        if (file.toLowerCase().includes("theme")) {
-          // Ask user if this is their theme provider
-          const response = await prompts({
-            type: "confirm",
-            name: "useTheme",
-            message: `Found potential theme provider at ${dir}/${file}. Do you want to use this?`,
-            initial: true,
-          });
-
-          if (response.useTheme) {
-            return {
-              exists: true,
-              path: `${dir}/${file.replace(/\.[jt]sx?$/, "")}`,
-            };
-          }
-        }
-      }
-    }
-  }
-
-  // No theme provider found or confirmed
-  return { exists: false, path: null };
+  const hasNativeWind = await isPackageInstalled("nativewind");
+  const hasTailwind = await isPackageInstalled("tailwindcss");
+  
+  // Check for config files
+  const hasTailwindConfig = await fs.pathExists(path.join(cwd, "tailwind.config.js"));
+  
+  return hasNativeWind && hasTailwind && hasTailwindConfig;
 }
 
 /**
- * Install required dependencies based on styling choice
+ * Add the NativeCN preset to the user's tailwind config
  */
-async function installDependencies(styling: "nativewind" | "stylesheet") {
-  console.log(chalk.bold("Installing dependencies..."));
-
-  // Check if this is an Expo project
-  const isExpo = await isPackageInstalled("expo");
-
-  if (styling === "nativewind" && !(await isPackageInstalled("nativewind"))) {
-    if (isExpo) {
-      // For Expo projects, use expo install for ALL dependencies
-      try {
-        await execa("npx", ["expo", "install", 
-          "nativewind",
-          "tailwindcss",
-          "react-native-reanimated",
-          "react-native-safe-area-context",
-          "clsx",
-          "tailwind-merge"
-        ], {
-          stdio: "inherit",
-        });
-        console.log(chalk.green("✓"), "Installed all dependencies with Expo");
-        return true;
-      } catch (error) {
-        console.error(
-          chalk.red("✗"),
-          "Failed to install dependencies with expo install:",
-          error instanceof Error ? error.message : String(error)
-        );
-        return false;
-      }
-    } else {
-      // For bare React Native projects, use specific versions
-      const dependencies = [
-        "clsx",
-        "tailwind-merge",
-        "nativewind@^4.1.0",
-        "tailwindcss@^3.4.17",
-        "react-native-reanimated@~3.16.1",
-        "react-native-safe-area-context@4.12.0"
-      ];
-
-      // Detect package manager
-      const packageManager = await detectPackageManager();
-
-      try {
-        const installCmd = packageManager === "yarn" ? "add" : "install";
-        await execa(packageManager, [installCmd, ...dependencies], {
-          stdio: "inherit",
-        });
-        console.log(chalk.green("✓"), "Dependencies installed");
-        return true;
-      } catch (error) {
-        console.error(
-          chalk.red("✗"),
-          "Failed to install dependencies:",
-          error instanceof Error ? error.message : String(error)
-        );
-        console.log(
-          chalk.yellow("!"),
-          "You can install them manually:",
-          `${packageManager} ${
-            packageManager === "yarn" ? "add" : "install"
-          } ${dependencies.join(" ")}`
-        );
-        return false;
-      }
-    }
-  }
-
-  // If we only need common dependencies and it's not an Expo project
-  if (!isExpo) {
-    const packageManager = await detectPackageManager();
-    try {
-      const installCmd = packageManager === "yarn" ? "add" : "install";
-      await execa(packageManager, [installCmd, "clsx", "tailwind-merge"], {
-        stdio: "inherit",
-      });
-      console.log(chalk.green("✓"), "Dependencies installed");
+async function addPresetToTailwindConfig(configPath: string): Promise<boolean> {
+  try {
+    let configContent = await fs.readFile(configPath, 'utf8');
+    
+    // Check if our preset is already there
+    if (configContent.includes('nativecn-preset') || configContent.includes('@nativecn/components/preset')) {
+      console.log(chalk.blue("i"), "NativeCN preset already in tailwind.config.js");
       return true;
-    } catch (error) {
-      console.error(
-        chalk.red("✗"),
-        "Failed to install dependencies:",
-        error instanceof Error ? error.message : String(error)
-      );
-      return false;
     }
-  }
-
-  return true;
-}
-
-/**
- * Detect the package manager being used
+    
+    // Create the nativecn-preset.js file in the user's project
+    const presetContent = `/**
+ * NativeCN default theme preset for tailwindcss
+ * Generated by NativeCN CLI
  */
-async function detectPackageManager() {
-  const cwd = process.cwd();
 
-  if (await fs.pathExists(path.join(cwd, "yarn.lock"))) {
-    return "yarn";
-  }
-
-  if (await fs.pathExists(path.join(cwd, "pnpm-lock.yaml"))) {
-    return "pnpm";
-  }
-
-  return "npm";
-}
-
-/**
- * Set up NativeWind configuration
- */
-async function setupNativeWind() {
-  const cwd = process.cwd();
-  const isExpo = await isPackageInstalled("expo");
-
-  // Create or update tailwind.config.js
-  const tailwindConfigPath = path.join(cwd, "tailwind.config.js");
-
-  if (!(await fs.pathExists(tailwindConfigPath))) {
-    // Create new tailwind config
-    const tailwindConfig = `/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./App.{js,jsx,ts,tsx}",
-    "./app/**/*.{js,jsx,ts,tsx}",
-    "./components/**/*.{js,jsx,ts,tsx}",
-    "./screens/**/*.{js,jsx,ts,tsx}",
-  ],
-  presets: [require("nativewind/preset")],
   theme: {
     extend: {
       colors: {
@@ -373,227 +279,171 @@ module.exports = {
       },
     },
   },
-  plugins: [],
-};
-`;
-
-    await fs.writeFile(tailwindConfigPath, tailwindConfig);
-    console.log(chalk.green("✓"), "Created tailwind.config.js");
-  } else {
-    console.log(chalk.blue("i"), "tailwind.config.js already exists, skipping");
-  }
-
-  // Create global.css
-  const globalCssPath = path.join(cwd, "global.css");
-  if (!(await fs.pathExists(globalCssPath))) {
-    const globalCss = `@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  :root {
-    --background: #FFFFFF;
-    --foreground: #0F172A;
-    
-    --primary: #2563EB;
-    --primary-foreground: #FFFFFF;
-    
-    --secondary: #F1F5F9;
-    --secondary-foreground: #0F172A;
-    
-    --destructive: #EF4444;
-    --destructive-foreground: #FFFFFF;
-    
-    --accent: #F1F5F9;
-    --accent-foreground: #0F172A;
-    
-    --input: #E2E8F0;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: #0F172A;
-      --foreground: #F8FAFC;
-      
-      --primary: #3B82F6;
-      --primary-foreground: #FFFFFF;
-      
-      --secondary: #334155;
-      --secondary-foreground: #F8FAFC;
-      
-      --destructive: #F87171;
-      --destructive-foreground: #FFFFFF;
-      
-      --accent: #1E293B;
-      --accent-foreground: #F8FAFC;
-      
-      --input: #1E293B;
-    }
-  }
 }`;
-    await fs.writeFile(globalCssPath, globalCss);
-    console.log(chalk.green("✓"), "Created global.css");
-  } else {
-    console.log(chalk.blue("i"), "global.css already exists, skipping");
-  }
 
-  // Create or update metro.config.js
-  const metroConfigPath = path.join(cwd, "metro.config.js");
-  if (!(await fs.pathExists(metroConfigPath))) {
-    // Create metro config based on project type
-    const metroConfig = `const { getDefaultConfig } = require("expo/metro-config");
-const { withNativeWind } = require('nativewind/metro');
-
-const config = getDefaultConfig(__dirname, { isCSSEnabled: true })
-
-module.exports = withNativeWind(config, { input: './global.css' })
-`;
-
-    await fs.writeFile(metroConfigPath, metroConfig);
-    console.log(chalk.green("✓"), "Created metro.config.js");
-  } else {
-    // Update existing metro.config.js
-    let metroConfig = await fs.readFile(metroConfigPath, "utf-8");
-    if (!metroConfig.includes("nativewind/metro")) {
-      // Determine which import to use based on project type
-      const getDefaultConfigImport = isExpo
-        ? 'require("expo/metro-config")'
-        : 'require("@react-native/metro-config")';
-
-      metroConfig = `const { withNativeWind } = require('nativewind/metro');
-const { getDefaultConfig } = ${getDefaultConfigImport};
-
-${metroConfig.replace(
-        "module.exports =",
-        "const config ="
-      )}
-
-module.exports = withNativeWind(config, { input: './global.css' });
-`;
-      await fs.writeFile(metroConfigPath, metroConfig);
-      console.log(chalk.green("✓"), "Updated metro.config.js");
-    } else {
-      console.log(chalk.blue("i"), "metro.config.js already configured, skipping");
-    }
-  }
-
-  // Check babel.config.js
-  const babelConfigPath = path.join(cwd, "babel.config.js");
-  if (await fs.pathExists(babelConfigPath)) {
-    let babelConfig = await fs.readFile(babelConfigPath, "utf-8");
-
-    // Check if NativeWind plugin is already configured
-    if (!babelConfig.includes("nativewind")) {
-      // Create new babel config based on project type
-      babelConfig = isExpo
-        ? `module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: [
-      ["babel-preset-expo", { jsxImportSource: "nativewind" }],
-      "nativewind/babel",
-    ],
-    plugins: [
-      "react-native-reanimated/plugin"
-    ],
-  };
-};`
-        : `module.exports = {
-  presets: [
-    ["react-native", { jsxImportSource: "nativewind" }],
-    "nativewind/babel",
-  ],
-  plugins: [
-    "react-native-reanimated/plugin",
-  ],
-};`;
-
-      await fs.writeFile(babelConfigPath, babelConfig);
-      console.log(chalk.green("✓"), "Updated babel.config.js");
-    } else {
-      console.log(
-        chalk.blue("i"),
-        "NativeWind already configured in babel.config.js"
-      );
-    }
-  } else {
-    // Create new babel.config.js based on project type
-    const babelConfig = isExpo
-      ? `module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: [
-      ["babel-preset-expo", { jsxImportSource: "nativewind" }],
-      "nativewind/babel",
-    ],
-    plugins: [
-      "react-native-reanimated/plugin"
-    ],
-  };
-};`
-      : `module.exports = {
-  presets: [
-    ["react-native", { jsxImportSource: "nativewind" }],
-    "nativewind/babel",
-  ],
-  plugins: [
-    "react-native-reanimated/plugin",
-  ],
-};`;
-
-    await fs.writeFile(babelConfigPath, babelConfig);
-    console.log(chalk.green("✓"), "Created babel.config.js");
-  }
-
-  // Create or update app.json for Expo projects
-  if (isExpo) {
-    const appJsonPath = path.join(cwd, "app.json");
-    if (await fs.pathExists(appJsonPath)) {
-      let appJson = await fs.readFile(appJsonPath, "utf-8");
-      const config = JSON.parse(appJson);
-
-      if (!config.expo?.web?.bundler) {
-        config.expo = {
-          ...config.expo,
-          web: {
-            ...config.expo?.web,
-            bundler: "metro"
+    // Write the preset file to the user's project
+    const userPresetPath = path.join(process.cwd(), 'nativecn-preset.js');
+    await fs.writeFile(userPresetPath, presetContent);
+    console.log(chalk.green("✓"), "Created nativecn-preset.js in your project");
+    
+    // Simple approach - find the module.exports and add our preset
+    if (configContent.includes('module.exports')) {
+      // If there's already a presets array
+      if (configContent.includes('presets:')) {
+        // Add our preset to the existing presets array
+        configContent = configContent.replace(
+          /presets:\s*\[([\s\S]*?)\]/,
+          (match, presets) => {
+            const separator = presets.trim() ? ', ' : '';
+            return `presets: [${presets}${separator}require('./nativecn-preset')]`;
           }
-        };
-        await fs.writeFile(appJsonPath, JSON.stringify(config, null, 2));
-        console.log(chalk.green("✓"), "Updated app.json");
+        );
       } else {
-        console.log(chalk.blue("i"), "app.json already configured, skipping");
+        // Add a new presets array
+        configContent = configContent.replace(
+          /module\.exports\s*=\s*{/,
+          'module.exports = {\n  presets: [require(\'./nativecn-preset\')],'
+        );
       }
-    }
-  }
-
-  // Create app.json if it doesn't exist (for Expo projects)
-  if (isExpo) {
-    const appJsonPath = path.join(cwd, "app.json");
-    if (!(await fs.pathExists(appJsonPath))) {
-      const appJson = {
-        expo: {
-          web: {
-            bundler: "metro"
-          }
+      
+      // Check and update content array to include components path
+      if (configContent.includes('content:')) {
+        const hasComponentsPath = configContent.includes('./components/') || configContent.includes('"./components/');
+        
+        if (!hasComponentsPath) {
+          // Add components path to the content array
+          configContent = configContent.replace(
+            /content:\s*\[([\s\S]*?)\]/,
+            (match, content) => {
+              const separator = content.trim() ? ', ' : '';
+              return `content: [${content}${separator}"./components/**/*.{js,jsx,ts,tsx}"]`;
+            }
+          );
+          console.log(chalk.green("✓"), "Added components path to content array in tailwind.config.js");
         }
-      };
-      await fs.writeFile(appJsonPath, JSON.stringify(appJson, null, 2));
+      } else {
+        // If no content array exists, add it
+        configContent = configContent.replace(
+          /module\.exports\s*=\s*{/,
+          'module.exports = {\n  content: ["./components/**/*.{js,jsx,ts,tsx}"],'
+        );
+        console.log(chalk.green("✓"), "Added content array with components path to tailwind.config.js");
+      }
+      
+      await fs.writeFile(configPath, configContent);
+      console.log(chalk.green("✓"), "Added NativeCN preset to tailwind.config.js");
+      return true;
     } else {
-      const appJson = JSON.parse(await fs.readFile(appJsonPath, "utf-8"));
-      if (!appJson.expo) appJson.expo = {};
-      if (!appJson.expo.web) appJson.expo.web = {};
-      appJson.expo.web.bundler = "metro";
-      await fs.writeFile(appJsonPath, JSON.stringify(appJson, null, 2));
+      console.log(chalk.yellow("!"), "Couldn't modify tailwind.config.js - please add the preset manually:");
+      console.log("presets: [require('./nativecn-preset')],");
+      console.log("content: [...existing content, \"./components/**/*.{js,jsx,ts,tsx}\"],");
+      return false;
     }
+  } catch (error) {
+    console.error(chalk.red("✗"), "Error modifying tailwind.config.js:", error);
+    return false;
   }
 }
 
 /**
- * Create initial utility files
+ * Check for existing theme providers in the project
  */
-async function createInitialFiles(
+async function checkForExistingThemeProvider() {
+  const cwd = process.cwd();
+  const potentialThemePaths = [
+    "src/theme",
+    "app/theme",
+    "lib/theme",
+    "context/theme",
+    "hooks/theme",
+  ];
+
+  for (const dir of potentialThemePaths) {
+    const fullPath = path.join(cwd, dir);
+
+    if (await fs.pathExists(fullPath)) {
+      const files = await fs.readdir(fullPath);
+
+      for (const file of files) {
+        if (file.toLowerCase().includes("theme")) {
+          // Ask user if this is their theme provider
+          const response = await prompts({
+            type: "confirm",
+            name: "useTheme",
+            message: `Found potential theme provider at ${dir}/${file}. Do you want to use this?`,
+            initial: true,
+          });
+
+          if (response.useTheme) {
+            return {
+              exists: true,
+              path: `${dir}/${file.replace(/\.[jt]sx?$/, "")}`,
+            };
+          }
+        }
+      }
+    }
+  }
+
+  // No theme provider found or confirmed
+  return { exists: false, path: null };
+}
+
+/**
+ * Install essential dependencies only
+ */
+async function installEssentialDependencies(styling: "nativewind" | "stylesheet") {
+  console.log(chalk.bold("Installing essential dependencies..."));
+
+  // We only need to install minimal dependencies
+  const dependencies = ["clsx", "tailwind-merge"];
+  
+  // Detect package manager
+  const packageManager = await detectPackageManager();
+  const installCmd = packageManager === "yarn" ? "add" : "install";
+  
+  try {
+    await execa(packageManager, [installCmd, ...dependencies], {
+      stdio: "inherit",
+    });
+    console.log(chalk.green("✓"), "Essential dependencies installed");
+    return true;
+  } catch (error) {
+    console.error(
+      chalk.red("✗"),
+      "Failed to install dependencies:",
+      error instanceof Error ? error.message : String(error)
+    );
+    console.log(
+      chalk.yellow("!"),
+      "You can install them manually:",
+      `${packageManager} ${installCmd} ${dependencies.join(" ")}`
+    );
+    return false;
+  }
+}
+
+/**
+ * Detect the package manager being used
+ */
+async function detectPackageManager() {
+  const cwd = process.cwd();
+
+  if (await fs.pathExists(path.join(cwd, "yarn.lock"))) {
+    return "yarn";
+  }
+
+  if (await fs.pathExists(path.join(cwd, "pnpm-lock.yaml"))) {
+    return "pnpm";
+  }
+
+  return "npm";
+}
+
+/**
+ * Create essential utility files without modifying existing ones
+ */
+async function createUtilityFiles(
   styling: "nativewind" | "stylesheet",
   useExistingTheme: boolean
 ) {
@@ -603,9 +453,10 @@ async function createInitialFiles(
   const utilsDir = path.join(cwd, "lib");
   await fs.ensureDir(utilsDir);
 
-  // Create cn.ts utility
+  // Create cn.ts utility if it doesn't exist
   const cnPath = path.join(utilsDir, "utils.ts");
-  const cnContent = `import { clsx, type ClassValue } from 'clsx';
+  if (!(await fs.pathExists(cnPath))) {
+    const cnContent = `import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 /**
@@ -617,117 +468,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 `;
 
-  await fs.writeFile(cnPath, cnContent);
-  console.log(chalk.green("✓"), "Created utility functions");
-
-  // Add global.css import to App entry point if using NativeWind
-  if (styling === "nativewind") {
-    // Try common App entry point paths, including Expo Router's _layout.tsx
-    const appPaths = [
-      "app/_layout.tsx",  // Expo Router layout file
-      "app/_layout.jsx",
-      "app/_layout.js",
-      "App.tsx",
-      "App.jsx",
-      "App.js",
-      "app/index.tsx",
-      "app/index.jsx",
-      "app/index.js",
-      "src/App.tsx",
-      "src/App.jsx",
-      "src/App.js",
-    ];
-
-    for (const appPath of appPaths) {
-      const fullPath = path.join(cwd, appPath);
-      if (await fs.pathExists(fullPath)) {
-        let appContent = await fs.readFile(fullPath, "utf-8");
-        
-        // Only add import if it doesn't exist
-        if (!appContent.includes('import "../global.css"') && !appContent.includes('import "./global.css"')) {
-          // Use different import path based on file location
-          const importPath = appPath.startsWith("app/") ? "../global.css" : "./global.css";
-          appContent = `import "${importPath}";\n\n${appContent}`;
-          await fs.writeFile(fullPath, appContent);
-          console.log(chalk.green("✓"), `Added global.css import to ${appPath}`);
-        }
-        break;
-      }
-    }
-  }
-
-  // Create theme context if needed
-  if (!useExistingTheme) {
-    const themeDir = path.join(cwd, "lib");
-    await fs.ensureDir(themeDir);
-
-    const themePath = path.join(themeDir, "ThemeContext.tsx");
-    const themeContent = `import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Appearance } from 'react-native';
-
-export type ThemeMode = 'light' | 'dark';
-
-interface ThemeContextType {
-  theme: ThemeMode;
-  setTheme: (theme: ThemeMode) => void;
-  toggleTheme: () => void;
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-export interface ThemeProviderProps {
-  defaultTheme?: ThemeMode;
-  useSystemTheme?: boolean;
-  children: React.ReactNode;
-}
-
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({
-  defaultTheme = 'light',
-  useSystemTheme = true,
-  children,
-}) => {
-  const [theme, setTheme] = useState<ThemeMode>(defaultTheme);
-
-  useEffect(() => {
-    if (useSystemTheme) {
-      const colorScheme = Appearance.getColorScheme() as ThemeMode || defaultTheme;
-      setTheme(colorScheme);
-
-      const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-        setTheme(colorScheme as ThemeMode || defaultTheme);
-      });
-
-      return () => {
-        subscription.remove();
-      };
-    }
-  }, [useSystemTheme, defaultTheme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};
-
-export const useTheme = (): ThemeContextType => {
-  const context = useContext(ThemeContext);
-  
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  
-  return context;
-};
-`;
-
-    await fs.writeFile(themePath, themeContent);
-    console.log(chalk.green("✓"), "Created theme context");
+    await fs.writeFile(cnPath, cnContent);
+    console.log(chalk.green("✓"), "Created utility functions in lib/utils.ts");
+  } else {
+    console.log(chalk.blue("i"), "lib/utils.ts already exists, skipping");
   }
 }
-
-

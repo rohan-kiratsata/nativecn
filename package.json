@@ -5,6 +5,9 @@
   "workspaces": [
     "packages/*"
   ],
+  "bin": {
+    "nativecn": "./packages/cli/dist/index.js"
+  },
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",

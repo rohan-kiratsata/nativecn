@@ -63,7 +63,7 @@ const Button: React.FC<ButtonProps> = ({
       : variant === "destructive"
       ? mode === "dark"
         ? "text-dark-destructive-foreground"
-        : "text-destructive-foreground"
+        : "text-white"
       : variant === "secondary"
       ? mode === "dark"
         ? "text-dark-secondary-foreground"

@@ -17,6 +17,7 @@ const commander_1 = require("commander");
 const chalk_1 = __importDefault(require("chalk"));
 const init_1 = require("./commands/init");
 const add_1 = require("./commands/add");
+const preset_1 = require("./commands/preset");
 const package_1 = require("./utils/package");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -39,6 +40,10 @@ function main() {
             .option("-d, --dir <directory>", "Target directory for the component", "./components/ui")
             .option("--overwrite", "Overwrite existing component", false)
             .action(add_1.addCommand);
+        program
+            .command("preset")
+            .description("Generate the NativeCN preset file for tailwind.config.js")
+            .action(preset_1.presetCommand);
         // Add more commands as needed
         program
             .command("list")

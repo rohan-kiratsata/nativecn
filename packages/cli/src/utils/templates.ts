@@ -94,12 +94,6 @@ function processTemplateContent(content: string, config: any) {
       /import.*from\s*["']@nativecn\/core["']/g,
       `import { cn, getVariantStyles, ThemeMode } from "@nativecn/core";\nimport { useTheme } from "${config.theme.existingThemePath}";`
     );
-
-    // Replace theme usage
-    content = content.replace(
-      /const themeContext = useNativeCNTheme\(\);/g,
-      "const themeContext = useTheme();"
-    );
   }
 
   return content;

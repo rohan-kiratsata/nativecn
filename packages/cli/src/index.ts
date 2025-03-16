@@ -3,6 +3,7 @@ import { Command } from "commander";
 import chalk from "chalk";
 import { initCommand } from "./commands/init";
 import { addCommand } from "./commands/add";
+import { presetCommand } from "./commands/preset";
 import { getPackageInfo } from "./utils/package";
 
 async function main() {
@@ -40,6 +41,11 @@ async function main() {
     )
     .option("--overwrite", "Overwrite existing component", false)
     .action(addCommand);
+
+  program
+    .command("preset")
+    .description("Generate the NativeCN preset file for tailwind.config.js")
+    .action(presetCommand);
 
   // Add more commands as needed
   program
