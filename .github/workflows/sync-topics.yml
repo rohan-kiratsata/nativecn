@@ -21,8 +21,21 @@ jobs:
           ")
           echo "keywords=$KEYWORDS" >> $GITHUB_OUTPUT
       
+      - name: Install GitHub CLI
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+          && sudo apt update \
+          && sudo apt install gh -y
+      
       - name: Update GitHub Topics
-        uses: Hodrobond/github-tag-action@1.0.1
-        with:
-          topics: ${{ steps.extract.outputs.keywords }}
-          token: ${{ secrets.GITHUB_TOKEN }} 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOPICS: ${{ steps.extract.outputs.keywords }}
+        run: |
+          # Replace commas with spaces
+          TOPICS_SPACE=$(echo $TOPICS | tr ',' ' ')
+          # Update repository topics
+          gh repo edit ${{ github.repository }} --add-topic $TOPICS_SPACE 
