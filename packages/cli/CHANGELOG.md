@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2025-03-16
+
+### Changed
+
+- Removed uncreated components from readme
+
+## [0.1.4] - 2024-03-16
+
+### Changed
+
+- Updated README.md with accurate command documentation
+- Improved documentation for available components
+- Clarified usage instructions for all commands
+
 ## [0.1.3] - 2024-03-16
 
 ### Fixed

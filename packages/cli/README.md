@@ -5,7 +5,7 @@ A CLI tool for initializing and managing NativeCN components in React Native pro
 ## Installation
 
 ```bash
-npm install -g @nativecn/cli
+npm install @nativecn/cli
 # or
 npx @nativecn/cli [command]
 ```
@@ -18,17 +18,37 @@ npx @nativecn/cli [command]
 npx nativecn init
 ```
 
-Options:
+The init command will:
 
-- `--styling <nativewind|stylesheet>` - Choose the styling approach
-- `--theme <light|dark|system>` - Choose the default theme
-- `--skip-install` - Skip installing dependencies
+1. Detect if your project uses NativeWind or StyleSheet
+2. Create a nativecn-preset.js file with theme configuration
+3. Add components directory structure
+4. Install essential dependencies
+5. Create utility functions
 
 ### Add components to your project
 
 ```bash
-npx nativecn add [component-name]
+npx nativecn add button input card
 ```
+
+Options:
+
+- `--dir <directory>` - Target directory for components (default: './components/ui')
+- `--overwrite` - Overwrite existing components
+
+### Generate NativeCN preset file
+
+```bash
+npx nativecn preset
+```
+
+Creates a nativecn-preset.js file with default theme colors.
+
+## Available Components
+
+- `button` - A versatile button component
+- And more to come!
 
 ## License
 
