@@ -1,3 +1,6 @@
+/* tslint:disable */
+/* eslint-disable */
+// @ts-nocheck /* This line will be removed when copied to user project */
 import React, { useState } from 'react';
 import {
   Pressable,
