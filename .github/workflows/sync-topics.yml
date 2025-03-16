@@ -36,7 +36,7 @@ jobs:
       
       - name: Update GitHub Topics
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.TOPICS_PAT }}
           TOPICS: ${{ steps.extract.outputs.keywords }}
         run: |
           # Get all topics as an array
