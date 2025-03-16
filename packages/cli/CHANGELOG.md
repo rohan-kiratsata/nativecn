@@ -9,9 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Improved regex for removing TypeScript directives from templates
+- Updated changelog error
+- Updated typescript directives removal technique in templates.js
 
 ## [0.1.9] - 2025-03-16
+
+### Changed
+
+- Improved regex for removing TypeScript directives from templates
+
+## [0.1.8] - 2025-03-16
 
 ### Changed
 

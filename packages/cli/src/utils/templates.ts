@@ -87,10 +87,16 @@ export async function copyComponentTemplate(
  * Process template content based on configuration
  */
 function processTemplateContent(content: string, config: NativeCNConfig) {
-  // Strip out TypeScript directives
-  content = content.replace(/\/\* tslint:disable \*\/([\r\n]+|$)/g, '');
-  content = content.replace(/\/\* eslint-disable \*\/([\r\n]+|$)/g, '');
-  content = content.replace(/\/\/ @ts-nocheck.*?([\r\n]+|$)/g, '');
+  // Strip out TypeScript directives - remove the first 3 lines if they're the directive comments
+  const lines = content.split(/\r?\n/);
+  if (
+    lines.length >= 3 &&
+    lines[0].trim() === '/* tslint:disable */' &&
+    lines[1].trim() === '/* eslint-disable */' &&
+    lines[2].trim().startsWith('// @ts-nocheck')
+  ) {
+    content = lines.slice(3).join('\n');
+  }
 
   // Replace import paths based on styling approach
   if (config.styling === 'stylesheet') {
