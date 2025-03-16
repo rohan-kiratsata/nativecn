@@ -10,7 +10,7 @@ import {
 
 import { cn } from '../../../lib/utils';
 
-import { buttonClassNames } from './styles';
+import { buttonClassNames, textClassNames, iconColors } from './styles';
 
 interface ButtonProps extends TouchableOpacityProps {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
@@ -48,53 +48,13 @@ const Button: React.FC<ButtonProps> = ({
   );
 
   const textClasses = cn(
-    'text-sm font-medium',
-    size === 'sm' ? 'text-xs' : 'text-sm',
-    variant === 'default'
-      ? mode === 'dark'
-        ? 'text-dark-primary-foreground'
-        : 'text-primary-foreground'
-      : variant === 'destructive'
-        ? mode === 'dark'
-          ? 'text-dark-destructive-foreground'
-          : 'text-white'
-        : variant === 'secondary'
-          ? mode === 'dark'
-            ? 'text-dark-secondary-foreground'
-            : 'text-secondary-foreground'
-          : variant === 'outline'
-            ? mode === 'dark'
-              ? 'text-dark-accent-foreground'
-              : 'text-accent-foreground'
-            : variant === 'link'
-              ? mode === 'dark'
-                ? 'text-primary-foreground underline-offset-4 underline'
-                : 'text-dark-primary-foreground underline-offset-4 underline'
-              : variant === 'ghost'
-                ? mode === 'dark'
-                  ? 'text-dark-accent-foreground'
-                  : 'text-accent-foreground'
-                : mode === 'dark'
-                  ? 'text-dark-primary-foreground'
-                  : 'text-primary-foreground',
+    textClassNames.base,
+    textClassNames.size[size],
+    textClassNames[mode][variant],
     textClassName
   );
 
   const isIconButton = size === 'icon';
-
-  // Get icon color based on variant and mode
-  const getIconColor = () => {
-    if (variant === 'default' || variant === 'destructive') {
-      return '#FFFFFF';
-    }
-    if (variant === 'secondary') {
-      return mode === 'dark' ? '#FFFFFF' : '#000000';
-    }
-    if (variant === 'link') {
-      return '#2563EB';
-    }
-    return mode === 'dark' ? '#FFFFFF' : '#000000';
-  };
 
   return (
     <Pressable
@@ -111,7 +71,7 @@ const Button: React.FC<ButtonProps> = ({
           return React.cloneElement(child, {
             ...child.props,
             size: isIconButton ? 20 : 16,
-            color: child.props.color || getIconColor(),
+            color: child.props.color || iconColors[mode][variant],
             className: cn(isIconButton ? 'w-5 h-5' : 'w-4 h-4 shrink-0', child.props.className),
           });
         } else if (typeof child === 'string' || typeof child === 'number') {

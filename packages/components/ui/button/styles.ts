@@ -40,3 +40,50 @@ export const buttonClassNames = {
 
   disabled: 'opacity-50 pointer-events-none',
 };
+
+// Text classNames for different variants and modes
+export const textClassNames = {
+  base: 'text-sm font-medium',
+  size: {
+    default: 'text-sm',
+    sm: 'text-xs',
+    lg: 'text-sm',
+    icon: 'text-sm',
+  },
+  light: {
+    default: 'text-primary-foreground',
+    destructive: 'text-white',
+    secondary: 'text-secondary-foreground',
+    outline: 'text-accent-foreground',
+    ghost: 'text-accent-foreground',
+    link: 'text-dark-primary-foreground underline-offset-4 underline',
+  },
+  dark: {
+    default: 'text-dark-primary-foreground',
+    destructive: 'text-dark-destructive-foreground',
+    secondary: 'text-dark-secondary-foreground',
+    outline: 'text-dark-accent-foreground',
+    ghost: 'text-dark-accent-foreground',
+    link: 'text-primary-foreground underline-offset-4 underline',
+  },
+};
+
+// Icon colors for different variants and modes
+export const iconColors = {
+  light: {
+    default: '#FFFFFF',
+    destructive: '#FFFFFF',
+    secondary: '#000000',
+    outline: '#000000',
+    ghost: '#000000',
+    link: '#2563EB',
+  },
+  dark: {
+    default: '#FFFFFF',
+    destructive: '#FFFFFF',
+    secondary: '#FFFFFF',
+    outline: '#FFFFFF',
+    ghost: '#FFFFFF',
+    link: '#2563EB',
+  },
+};
