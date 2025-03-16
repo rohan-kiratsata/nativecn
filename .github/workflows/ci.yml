@@ -22,11 +22,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
+      - name: Create dist directories
+        run: |
+          mkdir -p packages/cli/dist
+          mkdir -p packages/components/dist
+          mkdir -p packages/lib/dist
 
       - name: Build
         run: npm run build
+
+      - name: Lint
+        run: npm run lint
 
       - name: Test
         run: npm run test 
