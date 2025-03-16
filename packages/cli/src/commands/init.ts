@@ -193,10 +193,7 @@ async function addPresetToTailwindConfig(configPath: string): Promise<boolean> {
     let configContent = await fs.readFile(configPath, 'utf8');
 
     // Check if our preset is already there
-    if (
-      configContent.includes('nativecn-preset') ||
-      configContent.includes('@nativecn/components/preset')
-    ) {
+    if (configContent.includes('nativecn-preset')) {
       console.log(chalk.blue('i'), 'NativeCN preset already in tailwind.config.js');
       return true;
     }

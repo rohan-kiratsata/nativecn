@@ -9,13 +9,10 @@ import { NativeCNConfig, readConfig } from './config';
  * Get the template directory for a component
  */
 export function getTemplateDir(component: string) {
-  // Try multiple possible locations for component templates
+  // Try possible locations for component templates
   const possiblePaths = [
-    // First check if there are templates within the CLI package
+    // Check for templates within the CLI package
     path.resolve(__dirname, '../../templates', component),
-
-    // Then check relative to the CLI package in a monorepo setup
-    path.resolve(__dirname, '../../../components/ui', component),
 
     // Lastly, check relative to current directory for local development
     path.resolve(process.cwd(), 'components/ui', component),

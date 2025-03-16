@@ -1,9 +1,9 @@
 {
   "name": "@nativecn/cli",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": false,
   "description": "CLI tool for initializing and managing NativeCN components in React Native projects",
-  "author": "Your Name <your.email@example.com>",
+  "author": "major tom <tailwiinder@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/tailwiinder/nativecn#readme",
   "repository": {

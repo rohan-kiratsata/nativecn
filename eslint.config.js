@@ -13,6 +13,7 @@ export default [
       'packages/*/dist/**',
       'packages/*/.turbo/**',
       'packages/cli/src/**/*.js',
+      'packages/cli/templates/**',
       'dist/**',
       '**/*.d.ts',
       'coverage/**',
