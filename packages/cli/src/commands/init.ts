@@ -317,16 +317,27 @@ async function installEssentialDependencies() {
   console.log(chalk.bold('Installing essential dependencies...'));
 
   // We only need to install minimal dependencies
-  const dependencies = ['clsx', 'tailwind-merge'];
+  const dependencies = ['clsx', 'tailwind-merge', 'react-native-vector-icons'];
+
+  // Dev dependencies
+  const devDependencies = ['@types/react-native-vector-icons'];
 
   // Detect package manager
   const packageManager = await detectPackageManager();
   const installCmd = packageManager === 'yarn' ? 'add' : 'install';
 
   try {
+    // Install regular dependencies
     await execa(packageManager, [installCmd, ...dependencies], {
       stdio: 'inherit',
     });
+
+    // Install dev dependencies
+    const devFlag = packageManager === 'npm' ? '--save-dev' : '-D';
+    await execa(packageManager, [installCmd, devFlag, ...devDependencies], {
+      stdio: 'inherit',
+    });
+
     console.log(chalk.green('✓'), 'Essential dependencies installed');
     return true;
   } catch (error) {
