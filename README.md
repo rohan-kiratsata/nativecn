@@ -89,7 +89,31 @@ npx nativecn init
 npx nativecn add button
 ```
 
-Contribution guidelines coming soon.
+## Contributing
+
+We welcome contributions from everyone! Whether you're fixing a bug, adding a feature, or improving documentation, your help is appreciated.
+
+Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on our code of conduct, the development process, and how to get your pull request accepted.
+
+### Quick Start for Contributors
+
+1. Fork the repository
+2. Clone your fork locally
+3. Set up the development environment:
+   ```bash
+   npm install
+   npm run build
+   ```
+4. Create a branch for your feature or bugfix
+5. Make your changes
+6. Test your changes
+7. Submit a pull request
+
+For more detailed instructions, please see the [Contributing Guidelines](CONTRIBUTING.md).
+
+## Code of Conduct
+
+We expect all participants to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md). Please read it before participating.
 
 ## License
 
