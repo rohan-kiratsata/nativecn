@@ -76,15 +76,7 @@ npm run dev
 The project is organized as a monorepo using npm workspaces:
 
 - `packages/cli`: Command-line interface for managing NativeCN components
-- `packages/components`: UI components implemented in React Native
 - `packages/lib`: Utility functions and common code
-
-Each component in `packages/components/ui` has its own directory with:
-
-- `index.tsx`: Component implementation
-- `styles.ts`: Styling for the component
-
-Similarly, the CLI templates for components are in `packages/cli/templates`.
 
 ## Development Workflow
 
@@ -117,22 +109,16 @@ npm run test
 
 To add a new component:
 
-1. Create component files in `packages/components/ui/<component-name>/`:
+1. Add component template files in `packages/cli/templates/<component-name>/`:
 
-   - `index.tsx`: Component implementation
-   - `styles.ts`: Component styles
-
-2. Add component template files in `packages/cli/templates/<component-name>/`:
    - `index.tsx.template`: Component template
    - `styles.ts.template`: Styles template
 
-Currently, the same files are used in the CLI and the components package. This is a bad practice and should be fixed in the future.
+2. Update the component dependencies in `packages/cli/src/commands/add.ts` if needed
 
-3. Update the component dependencies in `packages/cli/src/commands/add.ts` if needed
+3. Add component documentation
 
-4. Add component documentation
-
-5. Add tests for the component
+4. Add tests for the component
 
 ## Pull Request Process
 
