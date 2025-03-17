@@ -4,6 +4,8 @@ A React Native UI component library inspired by shadcn/ui. Get beautiful, access
 
 ## Installation & Usage
 
+You need to have nativewind installed and setup in your project to use this library.
+
 ```bash
 # Install via npm
 npm install @nativecn/cli
