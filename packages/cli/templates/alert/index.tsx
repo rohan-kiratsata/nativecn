@@ -18,6 +18,14 @@ type IconProps = {
   color: string;
 };
 
+// Create a wrapper component to fix TypeScript compatibility issues
+const FeatherIcon = ({ name, size, color }: IconProps) => {
+  // Use the two-step type assertion pattern (first to unknown, then to the desired type)
+  // This is the recommended TypeScript pattern for type assertions when types don't overlap
+  const IconComponent = Feather as unknown as React.FC<IconProps>;
+  return <IconComponent name={name} size={size} color={color} />;
+};
+
 // Types for the Alert component
 interface AlertProps {
   variant?: 'default' | 'destructive';
@@ -59,7 +67,7 @@ export const Alert: React.FC<AlertProps> = ({
           {renderIcon ? (
             renderIcon({ name: icon, size: 16, color: iconColor })
           ) : (
-            <Feather name={icon} size={16} color={iconColor} />
+            <FeatherIcon name={icon} size={16} color={iconColor} />
           )}
         </View>
       )}
