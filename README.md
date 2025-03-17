@@ -47,6 +47,9 @@ Creates a nativecn-preset.js file with default theme colors.
 ## Available Components
 
 - `button` - A versatile button component
+- `accordion` - An accordion component
+- `alert` - An alert component
+- `alertdialog` - An alertdialog component
 - And more to come!
 
 ## Features
