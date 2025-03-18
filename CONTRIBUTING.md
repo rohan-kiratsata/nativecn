@@ -120,6 +120,95 @@ To add a new component:
 
 4. Add tests for the component
 
+### Testing New Component Templates in Applications
+
+When you add a new component template, it won't be immediately available in applications that use the CLI until the package is published. To test new components during development:
+
+#### Method 1: Build, Pack, and Install (Manual but Reliable)
+
+1. Build the CLI package to include your new templates:
+
+   ```bash
+   cd packages/cli
+   npm run build
+   ```
+
+2. Create a local package (tarball):
+
+   ```bash
+   npm pack
+   ```
+
+   This creates a file like `nativecn-cli-x.y.z.tgz` in the current directory.
+
+3. Install this local package in your test application:
+
+   ```bash
+   cd /path/to/your/test/app
+   npm install /path/to/nativecn/packages/cli/nativecn-cli-x.y.z.tgz
+   ```
+
+4. Now you can test your new component:
+   ```bash
+   npx nativecn add your-new-component
+   ```
+
+#### Method 2: Using npm link (Easier Workflow)
+
+1. Build the CLI package:
+
+   ```bash
+   cd packages/cli
+   npm run build
+   ```
+
+2. Link the package globally:
+
+   ```bash
+   npm link
+   ```
+
+3. In your test application, link to the global package:
+
+   ```bash
+   cd /path/to/your/test/app
+   npm link @nativecn/cli
+   ```
+
+4. Test your new component:
+
+   ```bash
+   npx nativecn add your-new-component
+   ```
+
+5. When finished testing, unlink the package:
+   ```bash
+   npm unlink @nativecn/cli
+   ```
+
+#### Method 3: Direct Path Installation (Simplest)
+
+1. Build the CLI package:
+
+   ```bash
+   cd packages/cli
+   npm run build
+   ```
+
+2. Install the package directly from the local path:
+
+   ```bash
+   cd /path/to/your/test/app
+   npm install /path/to/nativecn/packages/cli
+   ```
+
+3. Test your new component:
+   ```bash
+   npx nativecn add your-new-component
+   ```
+
+Remember to rebuild the CLI package after making changes to component templates!
+
 ## Pull Request Process
 
 1. Ensure your code follows the project's coding style
