@@ -38,7 +38,9 @@ Options:
 - `--dir <directory>` - Target directory for components (default: './components/ui')
 - `--overwrite` - Overwrite existing components
 
-### Generate theme preset file (optional. this is asked to be done automatically when you run `npx nativecn init`. Use this if you want a more fine-grained control over the preset file.)
+### Generate theme preset file (optional)
+
+This is asked to be done automatically when you run `npx nativecn init`. Use this if you want a more fine-grained control over the preset file.
 
 ```bash
 npx nativecn preset
