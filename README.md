@@ -50,11 +50,16 @@ Creates a nativecn-preset.js file with default theme colors.
 
 ## Available Components
 
-- `button` - A versatile button component
-- `accordion` - An accordion component
-- `alert` - An alert component
-- `alertdialog` - An alertdialog component
-- And more to come!
+- [button](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/button) - A versatile button component
+- [accordion](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/accordion) - An accordion component
+- [alert](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/alert) - An alert component
+- [alertdialog](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/alertdialog) - An alertdialog component
+- [avatar](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/avatar) - An avatar component
+- [badge](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/badge) - A badge component
+- [breadcrumb](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/breadcrumb) - A breadcrumb component
+- [aspectratio](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/aspectratio) - An aspect ratio component
+
+And more to come! Check out the [Roadmap](ROADMAP.md) for more details.
 
 ## Features
 

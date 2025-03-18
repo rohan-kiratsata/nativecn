@@ -51,6 +51,10 @@ Creates a nativecn-preset.js file with default theme colors.
 - `accordion` - An accordion component
 - `alert` - An alert component
 - `alertdialog` - An alertdialog component
+- `avatar` - An avatar component
+- `badge` - A badge component
+- `breadcrumb` - A breadcrumb component
+- `aspectratio` - An aspect ratio component
 - And more to come!
 
 ## License
