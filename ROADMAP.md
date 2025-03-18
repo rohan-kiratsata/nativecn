@@ -13,14 +13,14 @@ NativeCN is in early development with a foundation of core components and infras
 - [x] [Accordion component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/accordion)
 - [x] [Alert component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/alert)
 - [x] [Alert Dialog component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/alertdialog)
-- [ ] Aspect Ratio component
-- [ ] Avatar component
-- [ ] Badge component
-- [ ] Breadcrumb component
+- [ ] Aspect Ratio component (WIP)
+- [ ] Avatar component (WIP)
+- [ ] Badge component (WIP)
+- [ ] Breadcrumb component (WIP)
 - [x] [Button component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/button)
 - [ ] Calendar component
-- [ ] Card component
-- [ ] Carousel component
+- [ ] Card component (WIP)
+- [ ] Carousel component (WIP)
 - [ ] Checkbox component
 - [ ] Collapsible component
 - [ ] Combobox component
