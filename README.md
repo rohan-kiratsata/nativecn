@@ -64,6 +64,16 @@ Creates a nativecn-preset.js file with default theme colors.
 - **Full control** - Customize components to your specific needs
 - **Type safety** - Built with TypeScript for better development experience
 
+## Roadmap
+
+NativeCN is under active development. Here's what we're planning:
+
+- **More Components**: Expand our library with additional UI components that are present in shadcn/ui
+- **Documentation Site**: Create a dedicated documentation website with live examples
+- **Example Apps**: Create example apps using expo and react-native-cli to showcase the components in action
+
+For a more detailed view of our plans and progress, check out our [Roadmap](ROADMAP.md).
+
 ## Development
 
 To develop locally:
