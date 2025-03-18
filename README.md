@@ -118,3 +118,12 @@ We expect all participants to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md
 ## License
 
 MIT
+
+---
+
+<div align="center">
+  <p>If you find this project helpful, consider buying me a coffee ☕</p>
+  <a href="https://buymeacoffee.com/tailwiinder">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="217" height="60" />
+  </a>
+</div>
