@@ -1,3 +1,7 @@
+[![NPM Version](https://img.shields.io/npm/v/@nativecn/cli.svg)](https://www.npmjs.com/package/@nativecn/cli)
+[![Downloads](https://img.shields.io/npm/dm/@nativecn/cli.svg)](https://www.npmjs.com/package/@nativecn/cli)
+[![License](https://img.shields.io/npm/l/@nativecn/cli.svg)](https://github.com/tailwiinder/nativecn/blob/main/LICENSE)
+
 # @nativecn/cli
 
 A CLI tool for initializing and managing NativeCN components in React Native projects.
@@ -55,6 +59,8 @@ Creates a nativecn-preset.js file with default theme colors.
 - `badge` - A badge component
 - `breadcrumb` - A breadcrumb component
 - `aspectratio` - An aspect ratio component
+- `card` - A card component
+- `carousel` - A carousel component
 - And more to come!
 
 ## License

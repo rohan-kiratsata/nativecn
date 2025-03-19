@@ -19,8 +19,8 @@ NativeCN is in early development with a foundation of core components and infras
 - [x] [Breadcrumb component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/breadcrumb)
 - [x] [Button component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/button)
 - [ ] Calendar component
-- [ ] Card component (WIP)
-- [ ] Carousel component (WIP)
+- [x] [Card component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/card)
+- [x] [Carousel component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/carousel)
 - [ ] Checkbox component
 - [ ] Collapsible component
 - [ ] Combobox component
