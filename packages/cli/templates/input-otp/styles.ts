@@ -9,9 +9,10 @@ export const styles = {
   separatorDark: 'mx-2 text-gray-600',
 
   // Input base styles
-  input: 'text-center font-medium',
-  inputLight: 'bg-white text-black  border-gray-400',
-  inputDark: 'bg-dark-card  border-white/40 text-dark-foreground',
+  input: 'text-center font-medium flex flex-col items-center justify-center',
+  inputLight: 'bg-white text-black  border-gray-400 flex flex-col items-center justify-center',
+  inputDark:
+    'bg-dark-card  border-white/40 text-dark-foreground flex flex-col items-center justify-center',
 
   // Input size variants
   'input-sm': 'w-8 h-10 text-sm',
