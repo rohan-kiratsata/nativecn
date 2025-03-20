@@ -32,7 +32,7 @@ NativeCN is in early development with a foundation of core components and infras
 - [ ] Dropdown Menu component
 - [ ] Hover Card component
 - [ ] Input component
-- [ ] Input OTP component
+- [x] [Input OTP component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/input-otp)
 - [ ] Label component
 - [ ] Menubar component
 - [ ] Navigation Menu component

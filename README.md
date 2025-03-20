@@ -8,7 +8,7 @@ A React Native UI component library inspired by shadcn/ui. Get beautiful, access
 
 ## Installation & Usage
 
-You need to have nativewind installed and setup in your project to use this library.
+> Note: You need to have nativewind installed and setup in your project to use this library.
 
 ```bash
 # Install via npm
@@ -79,7 +79,7 @@ NativeCN is under active development. Here's what we're planning:
 
 - **More Components**: Expand our library with additional UI components that are present in shadcn/ui
 - **Documentation Site**: Create a dedicated documentation website with live examples
-- **Example Apps**: Create example apps using expo and react-native-cli to showcase the components in action
+- **Example Apps**: Create example apps using ~~expo and~~ react-native-cli to showcase the components in action
 
 For a more detailed view of our plans and progress, check out our [Roadmap](ROADMAP.md).
 
