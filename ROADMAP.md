@@ -67,7 +67,8 @@ NativeCN is in early development with a foundation of core components and infras
 ### Infrastructure
 
 - [ ] Implement automated testing
-- [ ] Add example apps using expo and react-native-cli to showcase the components in action
+- [x] Add example apps using expo to showcase the components in action [click here to view](https://github.com/tailwiinder/nativecn/tree/main/examples/expo/nativecn)
+- [ ] Add example apps using react-native-cli to showcase the components in action
 - [ ] Streamline the build and release process
 
 ## Medium-term Goals
