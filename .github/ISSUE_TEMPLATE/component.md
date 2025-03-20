@@ -26,6 +26,8 @@ assignees: ''
 - [ ] Proper component state management
 - [ ] Accessibility support (ARIA attributes, screen reader compatibility)
 
+> **Note:** Reference [shadcn/ui](https://ui.shadcn.com/docs/components) default theme for styling guidelines, props structure, and additional features inspiration.
+
 ### Variants/Props
 
 <!-- List the required variants and props -->
