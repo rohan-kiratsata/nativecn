@@ -1,6 +1,5 @@
-/* eslint-disable prettier/prettier */
 import React, { useRef, useState, useEffect } from 'react';
-import { View, TextInput, Pressable } from 'react-native';
+import { TextInput, Pressable, Text } from 'react-native';
 
 import { styles } from './styles';
 
@@ -10,9 +9,8 @@ export interface OTPInputProps {
   onChange: (value: string) => void;
   disabled?: boolean;
   autoFocus?: boolean;
-  gap?: number;
+  separator?: boolean;
   size?: 'sm' | 'md' | 'lg';
-  variant?: 'outline' | 'underline';
   mask?: boolean;
   keyboard?: 'numeric' | 'default';
   error?: boolean;
@@ -25,9 +23,8 @@ export const OTPInput = ({
   onChange,
   disabled = false,
   autoFocus = false,
-  gap = 8, // Default gap in pixels
+  separator = false,
   size = 'md',
-  variant = 'outline',
   mask = false,
   keyboard = 'numeric',
   error = false,
@@ -37,6 +34,9 @@ export const OTPInput = ({
   const [focused, setFocused] = useState<boolean>(false);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const inputRefs = useRef<(TextInput | null)[]>([]);
+
+  // Calculate the middle point for separator
+  const midPoint = Math.floor(length / 2);
 
   // Update local value when prop value changes
   useEffect(() => {
@@ -129,23 +129,47 @@ export const OTPInput = ({
     inputRefs.current[focusIndex]?.focus();
   };
 
-  // Get style classes based on props
+  // Get position-specific style based on index
+  const getPositionStyle = (index: number) => {
+    if (separator) {
+      // With separator, we create two groups
+      if (index === 0) return styles.inputFirstInGroup;
+      if (index === midPoint - 1) return styles.inputLastInGroup;
+      if (index === midPoint) return styles.inputFirstInGroup;
+      if (index === length - 1) return styles.inputLastInGroup;
+      return styles.inputMiddle;
+    } else {
+      // Without separator, just one continuous group
+      if (index === 0) return styles.inputFirstInGroup;
+      if (index === length - 1) return styles.inputLastInGroup;
+      return styles.inputMiddle;
+    }
+  };
+
+  // Get full input style
   const getInputStyle = (index: number) => {
     const isActive = index === focusedIndex;
+    const isFilled = !!localValue[index];
 
-    let inputStyle = `${styles.input} ${styles[`input-${size}`]} ${styles[`input-${variant}`]}`;
+    const styleClasses = [
+      styles.input,
+      styles[`input-${size}`],
+      styles['input-outline'],
+      getPositionStyle(index),
+    ];
 
-    if (isActive) inputStyle += ` ${styles.inputActive}`;
-    if (disabled) inputStyle += ` ${styles.inputDisabled}`;
-    if (error) inputStyle += ` ${styles.inputError}`;
+    if (isActive) styleClasses.push(styles.inputActive);
+    if (isFilled) styleClasses.push(styles.inputFilled);
+    if (disabled) styleClasses.push(styles.inputDisabled);
+    if (error) styleClasses.push(styles.inputError);
 
-    return inputStyle;
+    return styleClasses.join(' ');
   };
 
   return (
     <Pressable onPress={handleContainerPress} className={`${styles.container} ${className}`}>
       {Array.from({ length }).map((_, index) => (
-        <View key={index} style={{ marginRight: index < length - 1 ? gap : 0 }}>
+        <React.Fragment key={index}>
           <Pressable onPress={() => handleTap(index)}>
             <TextInput
               ref={ref => (inputRefs.current[index] = ref)}
@@ -166,7 +190,9 @@ export const OTPInput = ({
               accessibilityLabel={`OTP digit ${index + 1} of ${length}`}
             />
           </Pressable>
-        </View>
+
+          {separator && index === midPoint - 1 && <Text className={styles.separator}>—</Text>}
+        </React.Fragment>
       ))}
     </Pressable>
   );
