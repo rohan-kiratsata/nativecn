@@ -77,6 +77,9 @@ The project is organized as a monorepo using npm workspaces:
 
 - `packages/cli`: Command-line interface for managing NativeCN components
 - `packages/lib`: Utility functions and common code
+- `examples/`: Example applications for testing and showcasing components
+  - `examples/expo/nativecn`: Expo example application
+  - `examples/react-native-cli/nativecn`: React Native CLI example application (coming soon)
 
 ## Development Workflow
 
@@ -107,6 +110,21 @@ npm run test
 
 ## Adding New Components
 
+### Component Development Workflow
+
+We follow a test-first approach for component development:
+
+1. **Test in Example Apps First**: Before adding a new component to the library, you should first implement and test it in our example applications:
+
+   - Expo Example App: `/examples/expo/nativecn`
+   - React Native CLI Example App: _(coming soon)_
+
+   This ensures components work properly in real application environments before being formalized in the component library.
+
+2. **Once Tested**: After validating your component in the example apps, proceed with adding it to the library as described below.
+
+### Adding Component to the Library
+
 To add a new component:
 
 1. Add component template files in `packages/cli/templates/<component-name>/`:
@@ -123,6 +141,22 @@ To add a new component:
 ### Testing New Component Templates in Applications
 
 When you add a new component template, it won't be immediately available in applications that use the CLI until the package is published. To test new components during development:
+
+#### Using Example Apps
+
+The recommended workflow is to test your components in our provided example apps:
+
+1. Navigate to the appropriate example app:
+
+   ```bash
+   # For the Expo example
+   cd examples/expo/nativecn
+
+   # For the React Native CLI example (coming soon)
+   # cd examples/react-native-cli/nativecn
+   ```
+
+2. Use one of the methods below to make your local CLI changes available to the example app.
 
 #### Method 1: Build, Pack, and Install (Manual but Reliable)
 
@@ -141,10 +175,10 @@ When you add a new component template, it won't be immediately available in appl
 
    This creates a file like `nativecn-cli-x.y.z.tgz` in the current directory.
 
-3. Install this local package in your test application:
+3. Install this local package in your example application:
 
    ```bash
-   cd /path/to/your/test/app
+   cd /path/to/nativecn/examples/expo/nativecn
    npm install /path/to/nativecn/packages/cli/nativecn-cli-x.y.z.tgz
    ```
 
@@ -168,10 +202,10 @@ When you add a new component template, it won't be immediately available in appl
    npm link
    ```
 
-3. In your test application, link to the global package:
+3. In your example application, link to the global package:
 
    ```bash
-   cd /path/to/your/test/app
+   cd /path/to/nativecn/examples/expo/nativecn
    npm link @nativecn/cli
    ```
 
@@ -198,7 +232,7 @@ When you add a new component template, it won't be immediately available in appl
 2. Install the package directly from the local path:
 
    ```bash
-   cd /path/to/your/test/app
+   cd /path/to/nativecn/examples/expo/nativecn
    npm install /path/to/nativecn/packages/cli
    ```
 
@@ -208,6 +242,14 @@ When you add a new component template, it won't be immediately available in appl
    ```
 
 Remember to rebuild the CLI package after making changes to component templates!
+
+### Finalizing Your Component
+
+After thoroughly testing your component in the example apps:
+
+1. Make any necessary refinements to your component templates
+2. Ensure documentation is complete
+3. Submit a pull request following the [Pull Request Process](#pull-request-process)
 
 ## Pull Request Process
 
