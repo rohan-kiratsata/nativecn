@@ -15,6 +15,7 @@ export interface OTPInputProps {
   keyboard?: 'numeric' | 'default';
   error?: boolean;
   className?: string;
+  mode?: 'light' | 'dark';
 }
 
 export const OTPInput = ({
@@ -29,6 +30,7 @@ export const OTPInput = ({
   keyboard = 'numeric',
   error = false,
   className = '',
+  mode = 'light',
 }: OTPInputProps) => {
   const [localValue, setLocalValue] = useState<string>(value.slice(0, length));
   const [focused, setFocused] = useState<boolean>(false);
@@ -146,28 +148,33 @@ export const OTPInput = ({
     }
   };
 
-  // Get full input style
+  // Get full input style with mode-specific styles
   const getInputStyle = (index: number) => {
     const isActive = index === focusedIndex;
     const isFilled = !!localValue[index];
+    const isDark = mode === 'dark';
 
     const styleClasses = [
       styles.input,
       styles[`input-${size}`],
       styles['input-outline'],
       getPositionStyle(index),
+      isDark ? styles.inputDark : styles.inputLight,
     ];
 
-    if (isActive) styleClasses.push(styles.inputActive);
-    if (isFilled) styleClasses.push(styles.inputFilled);
-    if (disabled) styleClasses.push(styles.inputDisabled);
-    if (error) styleClasses.push(styles.inputError);
+    if (isActive) styleClasses.push(isDark ? styles.inputActiveDark : styles.inputActive);
+    if (isFilled) styleClasses.push(isDark ? styles.inputFilledDark : styles.inputFilled);
+    if (disabled) styleClasses.push(isDark ? styles.inputDisabledDark : styles.inputDisabled);
+    if (error) styleClasses.push(isDark ? styles.inputErrorDark : styles.inputError);
 
     return styleClasses.join(' ');
   };
 
+  const containerStyle = `${styles.container} ${mode === 'dark' ? styles.containerDark : ''} ${className}`;
+  const separatorStyle = mode === 'dark' ? styles.separatorDark : styles.separator;
+
   return (
-    <Pressable onPress={handleContainerPress} className={`${styles.container} ${className}`}>
+    <Pressable onPress={handleContainerPress} className={containerStyle}>
       {Array.from({ length }).map((_, index) => (
         <React.Fragment key={index}>
           <Pressable onPress={() => handleTap(index)}>
@@ -191,7 +198,7 @@ export const OTPInput = ({
             />
           </Pressable>
 
-          {separator && index === midPoint - 1 && <Text className={styles.separator}>—</Text>}
+          {separator && index === midPoint - 1 && <Text className={separatorStyle}>—</Text>}
         </React.Fragment>
       ))}
     </Pressable>

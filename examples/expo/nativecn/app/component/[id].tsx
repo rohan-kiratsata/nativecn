@@ -16,6 +16,7 @@ import BadgeShowcase from './showcases/BadgeShowcase';
 import BreadcrumbShowcase from './showcases/BreadcrumbShowcase';
 import CardShowcase from './showcases/CardShowcase';
 import CarouselShowcase from './showcases/CarouselShowcase';
+import OTPInputShowCase from './showcases/InputOtpShowCase';
 
 // Component mapping for dynamic rendering
 const COMPONENT_SHOWCASES: Record<string, React.ComponentType> = {
@@ -29,6 +30,7 @@ const COMPONENT_SHOWCASES: Record<string, React.ComponentType> = {
   breadcrumb: BreadcrumbShowcase,
   card: CardShowcase,
   carousel: CarouselShowcase,
+  OTPInput: OTPInputShowCase,
 };
 
 export default function ComponentDetails() {

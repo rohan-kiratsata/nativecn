@@ -87,6 +87,14 @@ const componentsData: ComponentInfo[] = [
     icon: 'image',
     category: 'Display',
   },
+  {
+    id: 'OTPInput',
+    name: 'OTP Input',
+    description:
+      'The OTPInputShowCase component demonstrates various OTP input styles, including basic, separated, secure, disabled, and custom-length inputs.',
+    icon: 'bell',
+    category: 'Input',
+  },
   // Future components can be added here
 ];
 
