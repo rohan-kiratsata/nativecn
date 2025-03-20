@@ -61,6 +61,7 @@ Creates a nativecn-preset.js file with default theme colors.
 - `aspectratio` - An aspect ratio component
 - `card` - A card component
 - `carousel` - A carousel component
+- `input-otp` - An input-otp component
 - And more to come!
 
 ## License

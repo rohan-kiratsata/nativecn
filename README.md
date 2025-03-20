@@ -62,6 +62,9 @@ Creates a nativecn-preset.js file with default theme colors.
 - [badge](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/badge) - A badge component
 - [breadcrumb](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/breadcrumb) - A breadcrumb component
 - [aspectratio](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/aspectratio) - An aspect ratio component
+- [card](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/card) - A card component
+- [carousel](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/carousel) - A carousel component
+- [input-otp](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/input-otp) - An input otp component
 
 And more to come! Check out the [Roadmap](ROADMAP.md) for more details.
 
