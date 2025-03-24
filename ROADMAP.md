@@ -46,7 +46,7 @@ NativeCN is in early development with a foundation of core components and infras
 - [ ] Separator component
 - [ ] Sheet component
 - [ ] Sidebar component
-- [ ] Skeleton component
+- [x] [Skeleton component](https://github.com/tailwiinder/nativecn/tree/main/packages/cli/templates/skeleton)
 - [ ] Slider component
 - [ ] Sonner component
 - [ ] Switch component

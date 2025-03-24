@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { Animated, View } from 'react-native';
+import { skeletonColors, animationConfig } from './styles';
 
 export const Skeleton = ({
   className,
-  mode,
+  mode = 'light',
   animated = true,
 }: {
   className: string;
@@ -19,13 +20,13 @@ export const Skeleton = ({
       Animated.sequence([
         Animated.timing(animatedValue, {
           toValue: 1,
-          duration: 800, // Smooth transition
-          useNativeDriver: false,
+          duration: animationConfig.duration,
+          useNativeDriver: animationConfig.useNativeDriver,
         }),
         Animated.timing(animatedValue, {
           toValue: 0,
-          duration: 800,
-          useNativeDriver: false,
+          duration: animationConfig.duration,
+          useNativeDriver: animationConfig.useNativeDriver,
         }),
       ])
     );
@@ -39,8 +40,8 @@ export const Skeleton = ({
   const animatedBackgroundColor = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [
-      mode === 'dark' ? '#1E1E1E' : '#E5E5E5', // Softer base color
-      mode === 'dark' ? '#18181A' : '#F2F2F2', // Less intense highlight
+      mode === 'dark' ? skeletonColors.dark.base : skeletonColors.light.base,
+      mode === 'dark' ? skeletonColors.dark.highlight : skeletonColors.light.highlight,
     ],
   });
 
@@ -52,7 +53,9 @@ export const Skeleton = ({
   ) : (
     <View
       className={`overflow-hidden ${className}`}
-      style={{ backgroundColor: `${mode === 'dark' ? '#1E1E1E' : '#E5E5E5'}` }}
+      style={{
+        backgroundColor: mode === 'dark' ? skeletonColors.dark.base : skeletonColors.light.base,
+      }}
     />
   );
 };
